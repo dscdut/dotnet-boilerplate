@@ -6,7 +6,6 @@ using DotnetBoilerplate.Application.Dtos;
 using DotnetBoilerplate.Domain.Payloads;
 using DotnetBoilerplate.Application.Exceptions;
 using DotnetBoilerplate.Application.ExternalServices;
-using DotnetBoilerplate.Application.Validators;
 using DotnetBoilerplate.Application.Repositories;
 using DotnetBoilerplate.Domain.Enums;
 using DotnetBoilerplate.Domain.Entities;
@@ -20,13 +19,13 @@ namespace DotnetBoilerplate.Application.Services
     }
     public class AuthService : IAuthService
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly IEmailService _emailService;
-        public AuthService(IUserRepository userRepository, IConfiguration configuration, IMapper mapper, IEmailService emailService)
+        public AuthService(IUnitOfWork unitOfWork, IConfiguration configuration, IMapper mapper, IEmailService emailService)
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
             _configuration = configuration;
             _mapper = mapper;
             _emailService = emailService;
@@ -35,12 +34,7 @@ namespace DotnetBoilerplate.Application.Services
 
         public async Task<TokenPayload> Login(TokenObtainPairDto tokenObtainPair)
         {
-            var validationResult = new TokenObtainPairValidator().Validate(tokenObtainPair);
-            if (!validationResult.IsValid)
-            {
-                throw new CustomException(StatusCodes.Status400BadRequest, ErrorCodeEnum.InvalidRequest, validationResult.Errors[0].ToString());
-            }
-            var user = await _userRepository.FirstOrDefaultAsync(u => tokenObtainPair.Email!.Equals(u.Email));
+            var user = await _unitOfWork.UserRepository.FirstOrDefaultAsync(u => tokenObtainPair.Email!.Equals(u.Email));
             if (user == null || !BCrypt.Net.BCrypt.Verify(tokenObtainPair.Password, user.Password))
             {
                 throw new CustomException(StatusCodes.Status401Unauthorized, ErrorCodeEnum.IncorrectEmailOrPassword, "Incorrect email or password.");
@@ -52,12 +46,7 @@ namespace DotnetBoilerplate.Application.Services
 
         public async Task<UserDto> Register(RegistrationDto registration)
         {
-            var validationResult = new RegistrationValidator().Validate(registration);
-            if (!validationResult.IsValid)
-            {
-                throw new CustomException(StatusCodes.Status400BadRequest, ErrorCodeEnum.InvalidSyntax, "Invalid syntax");
-            }
-            if (await _userRepository.ExistsAsync(user => registration.Email!.Equals(user.Email)))
+            if (await _unitOfWork.UserRepository.ExistsAsync(user => registration.Email!.Equals(user.Email)))
             {
                 throw new CustomException(StatusCodes.Status409Conflict, ErrorCodeEnum.ExistedEmail, "Email already exists");
             }
@@ -68,8 +57,9 @@ namespace DotnetBoilerplate.Application.Services
             user.IsSuperUser = false;
             user.IsStaff = false;
             user.RoleId = 2;
-            var newUser = await _userRepository.AddAsync(user);
-            return _mapper.Map<UserDto>(newUser) ?? throw new Exception("Error while creating user");
+            await _unitOfWork.UserRepository.AddAsync(user);
+            await _unitOfWork.SaveChangesAsync();
+            return _mapper.Map<UserDto>(user);
         }
     }
 }

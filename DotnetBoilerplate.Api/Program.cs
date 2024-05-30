@@ -3,6 +3,9 @@ using DotnetBoilerplate.Application;
 using DotnetBoilerplate.Infrastructure;
 using Microsoft.OpenApi.Models;
 using DotnetBoilerplate.Api.Middleware;
+using FluentValidation;
+using System.Reflection;
+using DotnetBoilerplate.Api.Filter;
 
 namespace DotnetBoilerplate.Api
 {
@@ -11,8 +14,11 @@ namespace DotnetBoilerplate.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-            builder.Services.AddControllers();
+            builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            builder.Services.AddControllers(options =>
+            {
+                options.Filters.Add<ValidationFilter>();
+            });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
@@ -66,8 +72,8 @@ namespace DotnetBoilerplate.Api
                 app.UseSwaggerUI();
             }
             app.UseHttpsRedirection();
-            app.UseAuthorization();
             app.UseMiddleware<ExceptionMiddleware>();
+            app.UseAuthorization();
             app.MapControllers();
             app.Run();
         }

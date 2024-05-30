@@ -5,6 +5,9 @@ using DotnetBoilerplate.Infrastructure.ExternalServices;
 using DotnetBoilerplate.Infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
+using DotnetBoilerplate.Infrastructure.Authorize;
+using Microsoft.AspNetCore.Authorization;
+using DotnetBoilerplate.Domain.Enums;
 
 namespace DotnetBoilerplate.Infrastructure
 {
@@ -21,10 +24,21 @@ namespace DotnetBoilerplate.Infrastructure
                 }
                 options.UseNpgsql(connectionString);
             });
-            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
-            services.AddScoped<IUserRepository, UserRepository>();
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IEmailService, EmailService>();
 
+
+            services.AddScoped<IAuthorizationHandler, RolesHandler>();
+            services.AddScoped<IAuthorizationHandler, MyAdminInfoHandler>();
+
+            services.AddAuthorizationBuilder()
+                .AddPolicy(PolicyName.CanDeleteUserPolicy, policy => policy.Requirements.Add(new RolesRequirement([RoleEnum.Admin], "The user is not authorized to delete information")))
+                .AddPolicy(PolicyName.CanAdminUpdateUserPolicy, policy =>
+                {
+                    policy.Requirements.Add(new RolesRequirement([RoleEnum.Admin], "The user is not authorized to edit information"));
+                    policy.Requirements.Add(new MyAdminInfoRequirement("The admin is not authorized to edit information of other admins"));
+                });
             return services;
         }
     }

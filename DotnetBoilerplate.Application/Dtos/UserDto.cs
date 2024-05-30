@@ -1,5 +1,4 @@
-﻿using DotnetBoilerplate.Domain.Common;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace DotnetBoilerplate.Application.Dtos
 {
@@ -20,6 +19,7 @@ namespace DotnetBoilerplate.Application.Dtos
 
         //public DateTime DateJoined { get; set; }
         //public int RoleId { get; set; }
-        //public RoleDto? Role { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public RoleDto? Role { get; set; }
     }
 }

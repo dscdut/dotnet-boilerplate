@@ -32,6 +32,9 @@ namespace DotnetBoilerplate.Infrastructure
                 entity.Property(e => e.UpdatedAt).HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
                 entity.Property(e => e.LastLogin).HasConversion(v => v, v => DateTime.SpecifyKind(v ?? DateTime.UtcNow, DateTimeKind.Utc));
                 entity.Property(e => e.DateJoined).HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+
+                // Make the Email property unique
+                entity.HasIndex(e => e.Email).IsUnique();
             });
 
             modelBuilder.Entity<User>().ToTable("users");

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using DotnetBoilerplate.Application.Services;
+using DotnetBoilerplate.Domain.Enums;
+using DotnetBoilerplate.Infrastructure.Authorize;
 
 namespace DotnetBoilerplate.Api.Controllers
 {
@@ -31,6 +33,7 @@ namespace DotnetBoilerplate.Api.Controllers
         /// <returns>Returns the user with the specified ID.</returns>
         [HttpGet]
         [Route("{id}")]
+        [RolesAuthorize(RequiredRoles = new RoleEnum[] { RoleEnum.Admin })]
         public async Task<IActionResult> GetUserById(int id)
         {
             var user = await _userService.GetByIdAsync(id);

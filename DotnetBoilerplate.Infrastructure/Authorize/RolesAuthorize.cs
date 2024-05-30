@@ -6,24 +6,19 @@ using DotnetBoilerplate.Domain.Enums;
 using DotnetBoilerplate.Application.Exceptions;
 using DotnetBoilerplate.Application.Services;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DotnetBoilerplate.Infrastructure.Authorize
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
     public class RolesAuthorize : AuthorizeAttribute, IAsyncAuthorizationFilter
     {
-        private readonly IUserService? _userService;
         public RoleEnum[] RequiredRoles { get; set; }
 
         public RolesAuthorize(params RoleEnum[] roles)
         {
             RequiredRoles = roles;
-        }
-
-        public RolesAuthorize(IUserService userService, params RoleEnum[] roles)
-        {
-            RequiredRoles = roles;
-            _userService = userService;
         }
 
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
@@ -34,12 +29,14 @@ namespace DotnetBoilerplate.Infrastructure.Authorize
                 throw new CustomException(StatusCodes.Status403Forbidden, "You do not have access to this resource!");
             }
 
-            if (_userService is null)
+            var userService = context.HttpContext.RequestServices.GetService<IUserService>();
+            if (userService == null)
             {
-                throw new CustomException(StatusCodes.Status500InternalServerError, "User service is not provided!");
+                context.Result = new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                return;
             }
 
-            var user = await _userService.GetByIdAsync(int.Parse(userId));
+            var user = await userService.GetByIdAsync(int.Parse(userId));
             if (user is null || !RequiredRoles.Select(r => r.ToString()).Contains(user.Role.Name))
             {
                 throw new CustomException(StatusCodes.Status403Forbidden, "You do not have access to this resource!");

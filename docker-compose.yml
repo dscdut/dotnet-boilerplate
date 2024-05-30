@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  api:
+    container_name: dotnet-boilerplate
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CONNECTION_STRING=Host=db;Port=5432;Database=dotnet-boilerplate;Username=postgres;Password=postgres
+    restart: unless-stopped
+    depends_on:
+      - db
+    networks:
+      - dotnet-boilerplate-network
+
+  db:
+    image: postgres
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=dotnet-boilerplate
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - dotnet-boilerplate-network
+
+volumes:
+  db-data:
+
+
+networks:
+  dotnet-boilerplate-network:

@@ -1,6 +1,6 @@
 ﻿namespace DotnetBoilerplate.Application.Dtos
 {
-    public class TokenRefresh
+    public class TokenRefreshDto
     {
         public string Refresh { get; set; }
     }

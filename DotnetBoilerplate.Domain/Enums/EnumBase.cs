@@ -10,6 +10,8 @@
     {
         InvalidRequest = 101,
         IncorrectEmailOrPassword = 102,
-        ServerError = 103
+        ServerError = 103,
+        InvalidSyntax = 104,
+        ExistedEmail = 108
     }
 }

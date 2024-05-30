@@ -10,10 +10,7 @@ namespace DotnetBoilerplate.Application.Profiles
         {
             // User profile
             CreateMap<User, UserDto>().ReverseMap();
-            CreateMap<CreateUserDto, Registration>()
-                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.RoleId))
-                .ReverseMap();
-            CreateMap<User, CreateUserDto>().ReverseMap();
+            CreateMap<User, RegistrationDto>().ReverseMap();
 
             // Role profile
             CreateMap<Role, RoleDto>().ReverseMap();

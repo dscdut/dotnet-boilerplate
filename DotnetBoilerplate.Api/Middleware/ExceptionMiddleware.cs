@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
-using DotnetBoilerplate.Application.Exceptions;
+﻿using DotnetBoilerplate.Application.Exceptions;
 using DotnetBoilerplate.Domain.Enums;
+using System.Text.Json;
 
 namespace DotnetBoilerplate.Api.Middleware
 {
@@ -23,14 +23,14 @@ namespace DotnetBoilerplate.Api.Middleware
                 context.Response.StatusCode = ex.StatusCode;
                 context.Response.ContentType = "application/json";
                 var response = new { error_code = ex.ErrorCode, message = ex.Message };
-                await context.Response.WriteAsync(JsonConvert.SerializeObject(response));
+                await context.Response.WriteAsync(JsonSerializer.Serialize(response));
             }
             catch (Exception)
             {
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 context.Response.ContentType = "application/json";
                 var response = new { error_code = ErrorCodeEnum.ServerError, message = "An unexpected error occurred on the server" };
-                await context.Response.WriteAsync(JsonConvert.SerializeObject(response));
+                await context.Response.WriteAsync(JsonSerializer.Serialize(response));
             }
         }
     }

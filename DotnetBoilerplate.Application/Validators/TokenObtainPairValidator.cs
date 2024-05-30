@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace DotnetBoilerplate.Application.Validators
 {
-    public class TokenObtainPairValidator : AbstractValidator<TokenObtainPair>
+    public class TokenObtainPairValidator : AbstractValidator<TokenObtainPairDto>
     {
         public TokenObtainPairValidator()
         {

@@ -1,6 +1,6 @@
 ﻿namespace DotnetBoilerplate.Application.Dtos
 {
-    public class MailData
+    public class MailDataDto
     {
         public string EmailToId { get; set; }
         public string EmailToName { get; set; }

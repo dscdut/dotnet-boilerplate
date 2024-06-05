@@ -4,6 +4,6 @@ namespace DotnetBoilerplate.Application.ExternalServices;
 
 public interface IEmailService
 {
-    Task SendMailAsync(MailData mailData);
+    Task SendMailAsync(MailDataDto mailData);
     Task SendEmailForgotPassword(string email);
 }

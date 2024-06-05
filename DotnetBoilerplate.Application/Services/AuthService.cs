@@ -9,13 +9,14 @@ using DotnetBoilerplate.Application.ExternalServices;
 using DotnetBoilerplate.Application.Validators;
 using DotnetBoilerplate.Application.Repositories;
 using DotnetBoilerplate.Domain.Enums;
+using DotnetBoilerplate.Domain.Entities;
 
 namespace DotnetBoilerplate.Application.Services
 {
     public interface IAuthService
     {
-        Task<TokenPayload> Login(TokenObtainPair loginDto);
-        //Task<UserDto> Register(Registration registerDto);
+        Task<TokenPayload> Login(TokenObtainPairDto loginDto);
+        Task<UserDto> Register(RegistrationDto registerDto);
     }
     public class AuthService : IAuthService
     {
@@ -32,7 +33,7 @@ namespace DotnetBoilerplate.Application.Services
         }
 
 
-        public async Task<TokenPayload> Login(TokenObtainPair tokenObtainPair)
+        public async Task<TokenPayload> Login(TokenObtainPairDto tokenObtainPair)
         {
             var validationResult = new TokenObtainPairValidator().Validate(tokenObtainPair);
             if (!validationResult.IsValid)
@@ -49,10 +50,26 @@ namespace DotnetBoilerplate.Application.Services
             return tokenPayload;
         }
 
-        //public async Task<UserDto> Register(Registration registration)
-        //{
-        //    UserDto userDto = await _userService.CreateAsync(_mapper.Map<CreateUserDto>(registration));
-        //    return userDto;
-        //}
+        public async Task<UserDto> Register(RegistrationDto registration)
+        {
+            var validationResult = new RegistrationValidator().Validate(registration);
+            if (!validationResult.IsValid)
+            {
+                throw new CustomException(StatusCodes.Status400BadRequest, ErrorCodeEnum.InvalidSyntax, "Invalid syntax");
+            }
+            if (await _userRepository.ExistsAsync(user => registration.Email!.Equals(user.Email)))
+            {
+                throw new CustomException(StatusCodes.Status409Conflict, ErrorCodeEnum.ExistedEmail, "Email already exists");
+            }
+            var user = _mapper.Map<User>(registration);
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            user.Password = hashedPassword;
+            user.IsActive = true;
+            user.IsSuperUser = false;
+            user.IsStaff = false;
+            user.RoleId = 2;
+            var newUser = await _userRepository.AddAsync(user);
+            return _mapper.Map<UserDto>(newUser) ?? throw new Exception("Error while creating user");
+        }
     }
 }

@@ -25,6 +25,11 @@ namespace DotnetBoilerplate.Infrastructure.Repositories
             return await _context.Set<T>().CountAsync(predicate);
         }
 
+        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _context.Set<T>().AnyAsync(predicate);
+        }
+
         public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
         {
             return await _context.Set<T>().FirstOrDefaultAsync(predicate);

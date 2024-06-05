@@ -30,23 +30,23 @@ namespace DotnetBoilerplate.Api.Controllers
         /// <returns>Returns the authentication token payload upon successful login.</returns>
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login([FromBody] TokenObtainPair payload)
+        public async Task<IActionResult> Login([FromBody] TokenObtainPairDto payload)
         {
             var tokenPayload = await _authService.Login(payload);
             return Ok(tokenPayload);
         }
 
-        ///// <summary>
-        ///// Handles user registration.
-        ///// </summary>
-        ///// <param name="payload">The registration payload.</param>
-        ///// <returns>Returns created registration</returns>
-        //[HttpPost]
-        //[Route("register")]
-        //public async Task<IActionResult> Register([FromBody] Registration payload)
-        //{
-        //    var userDto = await _authService.Register(payload);
-        //    return StatusCode(201, ResponseUtils.CreateResponse("User created successfully", new { id = userDto.Id, name = userDto.Name, email = userDto.Email, role = userDto.Role.Id }));
-        //}
+        /// <summary>
+        /// Handles user registration.
+        /// </summary>
+        /// <param name="payload">The registration payload.</param>
+        /// <returns>Returns created registration</returns>
+        [HttpPost]
+        [Route("register")]
+        public async Task<IActionResult> Register([FromBody] RegistrationDto payload)
+        {
+            var userDto = await _authService.Register(payload);
+            return StatusCode(201, userDto);
+        }
     }
 }

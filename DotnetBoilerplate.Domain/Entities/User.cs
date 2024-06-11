@@ -4,9 +4,9 @@ namespace DotnetBoilerplate.Domain.Entities
 {
     public class User : BaseDomainEntity
     {
-        public string? FullName { get; set; }
-        public string? Email { get; set; }
-        public string? Password { get; set; }
+        public string FullName { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public string Password { get; set; } = null!;
 
         public DateTime? LastLogin { get; set; }
         public bool IsSuperUser { get; set; }
@@ -15,6 +15,6 @@ namespace DotnetBoilerplate.Domain.Entities
 
         public DateTime DateJoined { get; set; } = DateTime.UtcNow;
         public int RoleId { get; set; }
-        public Role? Role { get; set; }
+        public Role Role { get; set; } = null!;
     }
 }

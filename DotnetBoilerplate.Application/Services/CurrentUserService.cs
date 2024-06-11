@@ -4,11 +4,6 @@ using Microsoft.AspNetCore.Http;
 
 namespace DotnetBoilerplate.Application.Services
 {
-    public interface ICurrentUserService
-    {
-        public int UserId { get; }
-    }
-
     public class CurrentUserService : ICurrentUserService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;

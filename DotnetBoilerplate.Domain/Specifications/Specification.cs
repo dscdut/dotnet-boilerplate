@@ -10,7 +10,7 @@ namespace DotnetBoilerplate.Domain.Specifications
 
         public bool IsSatisfiedBy(T entity)
         {
-            Func<T, bool> predicate = ToExpression().Compile();
+            var predicate = ToExpression().Compile();
             return predicate(entity);
         }
 
@@ -43,8 +43,8 @@ namespace DotnetBoilerplate.Domain.Specifications
 
         public override Expression<Func<T, bool>> ToExpression()
         {
-            Expression<Func<T, bool>> leftExpression = _left.ToExpression();
-            Expression<Func<T, bool>> rightExpression = _right.ToExpression();
+            var leftExpression = _left.ToExpression();
+            var rightExpression = _right.ToExpression();
 
             var paramExpr = Expression.Parameter(typeof(T));
             var exprBody = Expression.AndAlso(leftExpression.Body, rightExpression.Body);

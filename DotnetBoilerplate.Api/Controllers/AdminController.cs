@@ -1,9 +1,9 @@
 ﻿using DotnetBoilerplate.Application.Services;
 using DotnetBoilerplate.Api.Params;
-using DotnetBoilerplate.Infrastructure.Authorize;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using DotnetBoilerplate.Application.Dtos;
+using DotnetBoilerplate.Infrastructure.Authorization;
 
 namespace DotnetBoilerplate.Api.Controllers
 {
@@ -31,7 +31,7 @@ namespace DotnetBoilerplate.Api.Controllers
         /// <returns>Returns an IActionResult indicating the result of the deletion.</returns>
         [HttpDelete("users/{id}")]
         [Authorize(Policy = PolicyName.CanDeleteUserPolicy)]
-        public async Task<IActionResult> DeleteUserById(UserIdParam param)
+        public async Task<IActionResult> DeleteUserByIdAsync(UserIdParam param)
         {
             await _userService.DeleteUserByIdAsync(param.Id);
             return NoContent();
@@ -45,7 +45,7 @@ namespace DotnetBoilerplate.Api.Controllers
         /// <returns>Returns an IActionResult indicating the result of the update.</returns>
         [HttpPut("users/{id}")]
         [Authorize(Policy = PolicyName.CanAdminUpdateUserPolicy)]
-        public async Task<IActionResult> UpdateUserById(UserIdParam userIdParam, [FromBody]AdminUpdateUserDto adminUpdateUserDto)
+        public async Task<IActionResult> UpdateUserByIdAsync(UserIdParam userIdParam, [FromBody]AdminUpdateUserDto adminUpdateUserDto)
         {
             var user = await _userService.UpdateUserByIdAsync(userIdParam.Id, adminUpdateUserDto);
             return Ok(user);

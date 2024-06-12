@@ -18,15 +18,14 @@ namespace DotnetBoilerplate.Api.Filter
                 var validatorType = typeof(IValidator<>).MakeGenericType(argumentType);
                 var validator = context.HttpContext.RequestServices.GetService(validatorType) as IValidator;
 
-                if (validator != null)
-                {
-                    var validationContext = new ValidationContext<object>(argument.Value);
-                    var validationResult = validator.Validate(validationContext);
+                if (validator == null) continue;
+                
+                var validationContext = new ValidationContext<object>(argument.Value);
+                var validationResult = validator.Validate(validationContext);
 
-                    if (!validationResult.IsValid)
-                    {
-                        throw new ValidationException(validationResult.Errors);
-                    }
+                if (!validationResult.IsValid)
+                {
+                    throw new ValidationException(validationResult.Errors);
                 }
             }
         }

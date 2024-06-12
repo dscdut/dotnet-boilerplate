@@ -13,11 +13,28 @@ namespace DotnetBoilerplate.Infrastructure.Repositories
         protected readonly DbSet<T> _dbSet;
         protected readonly IMapper _mapper;
 
-        public BaseRepository(DataContext context, IMapper mapper)
+        protected BaseRepository(DataContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
             _dbSet = _context.Set<T>();
+        }
+
+        public virtual Task<T?> FirstOrDefaultAsync(Specification<T>? spec = null, List<Expression<Func<T, object>>>? includes = null, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null)
+        {
+            return _dbSet.AsNoTracking()
+                .ApplySpecification(spec)
+                .ApplyOrder(orderBy)
+                .FirstOrDefaultAsync();
+        }
+
+        public virtual Task<TDto?> FirstOrDefaultAsync<TDto>(Specification<T>? spec = null, List<Expression<Func<T, object>>>? includes = null, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null)
+        {
+            return _dbSet.AsNoTracking()
+                .ApplySpecification(spec)
+                .ApplyOrder(orderBy)
+                .ProjectTo<TDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync();
         }
 
         public virtual async Task AddAsync(T entity)
@@ -25,40 +42,40 @@ namespace DotnetBoilerplate.Infrastructure.Repositories
             await _dbSet.AddAsync(entity);
         }
 
-        public virtual async Task<int> CountAsync(Expression<Func<T, bool>>? predicate, Specification<T>? spec)
+        public virtual Task<int> CountAsync(Specification<T>? spec)
         {
-            var query = _dbSet.AsQueryable();
-            return await query.ApplyFilter(predicate).ApplySpecification(spec).CountAsync();
+            return _dbSet.AsNoTracking().ApplySpecification(spec).CountAsync();
         }
 
-        public virtual async Task<bool> ExistsAsync(Expression<Func<T, bool>>? predicate, Specification<T>? spec)
+        public virtual void Delete(T entity)
         {
-            var query = _dbSet.AsQueryable();
-            return await query.ApplyFilter(predicate).ApplySpecification(spec).AnyAsync();
-        }
-
-        public virtual Task DeleteAsync(T entity)
-        {
-            if (_context.Entry(entity).State == EntityState.Detached)
-            {
-                _dbSet.Attach(entity);
-            }
             _dbSet.Remove(entity);
-            return Task.CompletedTask;
         }
 
-        public virtual async Task<T?> FirstOrDefaultAsync(
-            Expression<Func<T, bool>>? predicate,
-            Specification<T>? spec,
-            List<Expression<Func<T, object>>>? includes,
-            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy)
+        public virtual Task<bool> ExistsAsync(Specification<T>? spec = null)
         {
-            var query = _dbSet.AsQueryable();
-            return await query
-                .ApplyFilter(predicate)
+            return _dbSet.AsNoTracking().ApplySpecification(spec).AnyAsync();
+        }
+
+        public Task<List<T>> ToListAsync(Specification<T>? spec = null, List<Expression<Func<T, object>>>? includes = null, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null, int? page = null,
+            int? size = null)
+        {
+            return _dbSet.AsNoTracking()
                 .ApplySpecification(spec)
                 .ApplyOrder(orderBy)
-                .FirstOrDefaultAsync();
+                .ApplyPaging(page, size)
+                .ToListAsync();
+        }
+
+        public Task<List<TDto>> ToListAsync<TDto>(Specification<T>? spec = null, List<Expression<Func<T, object>>>? includes = null, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null, int? page = null,
+            int? size = null)
+        {
+            return _dbSet.AsNoTracking()
+                .ApplySpecification(spec)
+                .ApplyOrder(orderBy)
+                .ApplyPaging(page, size)
+                .ProjectTo<TDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
         }
 
         public virtual async Task<T?> GetByIdAsync(int id)
@@ -66,63 +83,13 @@ namespace DotnetBoilerplate.Infrastructure.Repositories
             return await _dbSet.FindAsync(id);
         }
 
-        public virtual Task UpdateAsync(T entity)
+        public virtual void Update(T entity)
         {
-            _dbSet.Attach(entity);
-            _context.Entry(entity).State = EntityState.Modified;
-            return Task.CompletedTask;
-        }
-
-        public virtual async Task<TDto?> FirstOrDefaultAsync<TDto>(
-            Expression<Func<T, bool>>? predicate,
-            Specification<T>? spec,
-            List<Expression<Func<T, object>>>? includes,
-            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy)
-        {
-            var query = _dbSet.AsQueryable();
-            return await query
-                .ApplyFilter(predicate)
-                .ApplySpecification(spec)
-                .ApplyOrder(orderBy)
-                .ProjectTo<TDto>(_mapper.ConfigurationProvider)
-                .FirstOrDefaultAsync();
-        }
-
-        public virtual async Task<IReadOnlyList<T>> ToListAsync(
-            Expression<Func<T, bool>>? predicate,
-            Specification<T>? spec,
-            List<Expression<Func<T, object>>>? includes,
-            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy,
-            int? page, int? size)
-        {
-            var query = _dbSet.AsQueryable();
-            return await query
-                .ApplyFilter(predicate)
-                .ApplySpecification(spec)
-                .ApplyOrder(orderBy)
-                .ApplyPaging(page, size)
-                .ToListAsync();
-        }
-
-        public virtual async Task<IReadOnlyList<TDto>> ToListAsync<TDto>(
-            Expression<Func<T, bool>>? predicate,
-            Specification<T>? spec,
-            List<Expression<Func<T, object>>>? includes,
-            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy,
-            int? page, int? size)
-        {
-            var query = _dbSet.AsQueryable();
-            return await query
-                .ApplyFilter(predicate)
-                .ApplySpecification(spec)
-                .ApplyOrder(orderBy)
-                .ApplyPaging(page, size)
-                .ProjectTo<TDto>(_mapper.ConfigurationProvider)
-                .ToListAsync();
+            _dbSet.Update(entity);
         }
     }
 
-    static class RepositoryExtensions
+    internal static class RepositoryExtensions
     {
         public static IQueryable<T> ApplyPaging<T>(this IQueryable<T> query, int? page, int? size)
         {
@@ -162,14 +129,7 @@ namespace DotnetBoilerplate.Infrastructure.Repositories
 
         public static IQueryable<T> ApplyIncludes<T>(this IQueryable<T> query, List<Expression<Func<T, object>>>? includes) where T : class
         {
-            if (includes != null)
-            {
-                foreach (var include in includes)
-                {
-                    query = query.Include(include);
-                }
-            }
-            return query;
+            return includes == null ? query : includes.Aggregate(query, (current, include) => current.Include(include));
         }
     }
 }

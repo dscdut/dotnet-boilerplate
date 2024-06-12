@@ -1,5 +1,5 @@
 ﻿
-namespace DotnetBoilerplate.Infrastructure.Authorize
+namespace DotnetBoilerplate.Infrastructure.Authorization
 {
     public static class PolicyName
     {

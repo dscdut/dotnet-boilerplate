@@ -9,14 +9,10 @@ namespace DotnetBoilerplate.Infrastructure.Repositories
         private readonly DataContext _context;
         private bool _disposed = false;
         private IDbContextTransaction? _transaction;
-        private readonly IUserRepository _userRepository;
 
-        public IUserRepository UserRepository => _userRepository;
-
-        public UnitOfWork(DataContext context, IMapper mapper)
+        public UnitOfWork(DataContext context)
         {
             _context = context;
-            _userRepository = new UserRepository(_context, mapper);
         }
 
         public void BeginTransaction()
@@ -43,18 +39,16 @@ namespace DotnetBoilerplate.Infrastructure.Repositories
             _transaction?.Rollback();
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
-            if (!_disposed)
+            if (_disposed) return;
+            if (disposing)
             {
-                if (disposing)
-                {
-                    _transaction?.Dispose();
-                    _context.Dispose();
-                }
-
-                _disposed = true;
+                _transaction?.Dispose();
+                _context.Dispose();
             }
+
+            _disposed = true;
         }
 
         public void Dispose()

@@ -5,9 +5,9 @@ using DotnetBoilerplate.Infrastructure.ExternalServices;
 using DotnetBoilerplate.Infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
-using DotnetBoilerplate.Infrastructure.Authorize;
 using Microsoft.AspNetCore.Authorization;
 using DotnetBoilerplate.Domain.Enums;
+using DotnetBoilerplate.Infrastructure.Authorization;
 
 namespace DotnetBoilerplate.Infrastructure
 {
@@ -26,7 +26,9 @@ namespace DotnetBoilerplate.Infrastructure
             });
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddTransient<IEmailService, EmailService>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
 
 
             services.AddScoped<IAuthorizationHandler, RolesHandler>();

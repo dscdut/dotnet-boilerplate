@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using DotnetBoilerplate.Application.Dtos;
 using DotnetBoilerplate.Application.Services;
-using DotnetBoilerplate.Api.Utils;
 
 namespace DotnetBoilerplate.Api.Controllers
 {
@@ -30,9 +29,9 @@ namespace DotnetBoilerplate.Api.Controllers
         /// <returns>Returns the authentication token payload upon successful login.</returns>
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login([FromBody] TokenObtainPairDto payload)
+        public async Task<IActionResult> LoginAsync([FromBody] TokenObtainPairDto payload)
         {
-            var tokenPayload = await _authService.Login(payload);
+            var tokenPayload = await _authService.LoginAsync(payload);
             return Ok(tokenPayload);
         }
 
@@ -43,9 +42,9 @@ namespace DotnetBoilerplate.Api.Controllers
         /// <returns>Returns created registration</returns>
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> Register([FromBody] RegistrationDto payload)
+        public async Task<IActionResult> RegisterAsync([FromBody] RegistrationDto payload)
         {
-            var userDto = await _authService.Register(payload);
+            var userDto = await _authService.RegisterAsync(payload);
             return StatusCode(201, userDto);
         }
     }

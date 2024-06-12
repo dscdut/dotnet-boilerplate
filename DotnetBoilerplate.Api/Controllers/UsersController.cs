@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using DotnetBoilerplate.Application.Services;
 using DotnetBoilerplate.Api.Params;
 using DotnetBoilerplate.Application.Dtos;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using DotnetBoilerplate.Application.Services.User;
+using DotnetBoilerplate.Application.Services.CurrentUser;
 
 namespace DotnetBoilerplate.Api.Controllers
 {
@@ -15,18 +16,14 @@ namespace DotnetBoilerplate.Api.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly ICurrentUserService _currentUserService;
-        private readonly IMapper _mapper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UsersController"/> class.
         /// </summary>
         /// <param name="userService">The user service.</param>
-        public UsersController(IUserService userService, ICurrentUserService currentUserService, IMapper mapper)
+        public UsersController(IUserService userService)
         {
             _userService = userService;
-            _currentUserService = currentUserService;
-            _mapper = mapper;
         }
 
         /// <summary>
@@ -52,8 +49,7 @@ namespace DotnetBoilerplate.Api.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto updateUserDto)
         {
-            var userDto = _mapper.Map<AdminUpdateUserDto>(updateUserDto);
-            var updatedUser = await _userService.UpdateUserByIdAsync(_currentUserService.UserId, userDto);
+            var updatedUser = await _userService.UpdateUserByIdAsync(updateUserDto);
             return Ok(updatedUser);
         }
     }

@@ -8,10 +8,9 @@ using DotnetBoilerplate.Application.Exceptions;
 using DotnetBoilerplate.Application.ExternalServices;
 using DotnetBoilerplate.Application.Repositories;
 using DotnetBoilerplate.Domain.Enums;
-using DotnetBoilerplate.Domain.Entities;
 using DotnetBoilerplate.Domain.Specifications.Users;
 
-namespace DotnetBoilerplate.Application.Services
+namespace DotnetBoilerplate.Application.Services.Auth
 {
     public class AuthService : IAuthService
     {
@@ -46,9 +45,9 @@ namespace DotnetBoilerplate.Application.Services
         {
             if (await _userRepository.ExistsAsync(new UserEmailSpecification(registration.Email!)))
             {
-                throw new CustomException(StatusCodes.Status409Conflict, ErrorCodeEnum.ExistedEmail, "Email already exists");
+                throw new EmailExistedException();
             }
-            var user = _mapper.Map<User>(registration);
+            var user = _mapper.Map<Domain.Entities.User>(registration);
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
             user.Password = hashedPassword;
             user.IsActive = true;

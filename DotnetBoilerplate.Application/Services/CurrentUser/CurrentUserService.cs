@@ -1,14 +1,15 @@
 ﻿using DotnetBoilerplate.Application.Exceptions;
+using DotnetBoilerplate.Application.Repositories;
 using DotnetBoilerplate.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 
-namespace DotnetBoilerplate.Application.Services
+namespace DotnetBoilerplate.Application.Services.CurrentUser
 {
     public class CurrentUserService : ICurrentUserService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CurrentUserService(IHttpContextAccessor httpContextAccessor)
+        public CurrentUserService(IHttpContextAccessor httpContextAccessor, IUserRepository userRepository)
         {
             _httpContextAccessor = httpContextAccessor;
         }

@@ -1,15 +1,14 @@
-﻿using System.Linq.Expressions;
-using AutoMapper;
+﻿using AutoMapper;
 using DotnetBoilerplate.Application.Dtos;
 using DotnetBoilerplate.Application.Exceptions;
 using DotnetBoilerplate.Application.Repositories;
-using DotnetBoilerplate.Domain.Entities;
+using DotnetBoilerplate.Application.Services.CurrentUser;
 using DotnetBoilerplate.Domain.Enums;
 using DotnetBoilerplate.Domain.Payloads;
 using DotnetBoilerplate.Domain.Specifications.Users;
 using Microsoft.AspNetCore.Http;
 
-namespace DotnetBoilerplate.Application.Services
+namespace DotnetBoilerplate.Application.Services.User
 {
     public class UserService : IUserService
     {
@@ -34,29 +33,25 @@ namespace DotnetBoilerplate.Application.Services
             return new PaginatedResult<UserDto>(userCount, userDtos);
         }
 
-        public async Task DeleteUserByIdAsync(int id)
-        {
-            var user = await _userRepository.GetByIdAsync(id)
-                       ?? throw new CustomException(StatusCodes.Status404NotFound, ErrorCodeEnum.NotFound, "The user ID does not exist");
-            _userRepository.Delete(user);
-            await _unitOfWork.SaveChangesAsync();
-        }
-
         public async Task<UserDto?> GetMe()
         {
             return await _userRepository.FirstOrDefaultAsync<UserDto>(new UserIdSpecification(_currentUserService.UserId));
         }
 
-        public async Task<UserDto> UpdateUserByIdAsync(int id, AdminUpdateUserDto adminUpdateUserDto)
+        public async Task<UserDto> UpdateUserByIdAsync(UpdateUserDto updateUserDto)
         {
-            var user = await _userRepository.GetByIdAsync(id) 
-                       ?? throw new CustomException(StatusCodes.Status404NotFound, ErrorCodeEnum.NotFound, "The user ID does not exist");
-            user.FullName = adminUpdateUserDto.FullName;
-            user.Email = adminUpdateUserDto.Email;
-            user.RoleId = adminUpdateUserDto.RoleId;
+            var user = await _userRepository.GetByIdAsync(_currentUserService.UserId)
+                       ?? throw new UserIdNotFoundException();
+            var otherUser = await _userRepository.FirstOrDefaultAsync(new UserEmailSpecification(updateUserDto.Email!));
+            if (otherUser != null && otherUser.Id != user.Id)
+            {
+                throw new EmailExistedException();
+            }
+            _mapper.Map(updateUserDto, user);
+            _userRepository.Update(user);
             await _unitOfWork.SaveChangesAsync();
-            var userDto = await _userRepository.FirstOrDefaultAsync<UserDto>(new UserIdSpecification(id));
-            return userDto;
+            var userDto = await _userRepository.FirstOrDefaultAsync<UserDto>(new UserIdSpecification(user.Id));
+            return userDto!;
         }
     }
 }

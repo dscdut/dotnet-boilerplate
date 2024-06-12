@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using DotnetBoilerplate.Application.Dtos;
-using DotnetBoilerplate.Application.Services;
+using DotnetBoilerplate.Application.Services.Auth;
 
 namespace DotnetBoilerplate.Api.Controllers
 {

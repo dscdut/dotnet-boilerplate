@@ -1,4 +1,4 @@
-namespace DotnetBoilerplate.Application.Services;
+namespace DotnetBoilerplate.Application.Services.CurrentUser;
 
 public interface ICurrentUserService
 {

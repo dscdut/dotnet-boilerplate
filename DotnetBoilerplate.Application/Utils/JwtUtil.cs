@@ -41,7 +41,7 @@ namespace DotnetBoilerplate.Application.Utils
         {
             var secretKey = configuration.GetSection("JwtSettings:Secret")?.Value ?? "secret";
             var expirationTime = double.Parse(configuration.GetSection("JwtSettings:AccessTokenExpirationTime")?.Value?? "120");
-            SecurityToken accessToken = GenerateToken(user, secretKey, expirationTime);
+            var accessToken = GenerateToken(user, secretKey, expirationTime);
             var token = new TokenPayload();
             token.Access = _tokenHandler.WriteToken(accessToken);
             return token;
@@ -52,11 +52,13 @@ namespace DotnetBoilerplate.Application.Utils
             var secretKey = configuration.GetSection("JwtSettings:Secret")?.Value ?? "secret";
             var accessTokenExpirationTime = double.Parse(configuration.GetSection("JwtSettings:AccessTokenExpirationTime")?.Value ?? "120");
             var refreshTokenExpirationTime = double.Parse(configuration.GetSection("JwtSettings:RefreshTokenExpirationTime")?.Value ?? "10080");
-            SecurityToken accessToken = GenerateToken(user, secretKey, accessTokenExpirationTime);
-            SecurityToken refreshToken = GenerateToken(user, secretKey, refreshTokenExpirationTime);
-            var token = new TokenPayload();
-            token.Access = _tokenHandler.WriteToken(accessToken);
-            token.Refresh = _tokenHandler.WriteToken(refreshToken);
+            var accessToken = GenerateToken(user, secretKey, accessTokenExpirationTime);
+            var refreshToken = GenerateToken(user, secretKey, refreshTokenExpirationTime);
+            var token = new TokenPayload
+            {
+                Access = _tokenHandler.WriteToken(accessToken),
+                Refresh = _tokenHandler.WriteToken(refreshToken)
+            };
             return token;
         }
     }

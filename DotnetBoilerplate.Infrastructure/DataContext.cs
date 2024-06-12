@@ -32,6 +32,9 @@ namespace DotnetBoilerplate.Infrastructure
                 entity.Property(e => e.UpdatedAt).HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
                 entity.Property(e => e.LastLogin).HasConversion(v => v, v => DateTime.SpecifyKind(v ?? DateTime.UtcNow, DateTimeKind.Utc));
                 entity.Property(e => e.DateJoined).HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+
+                // Make the Email property unique
+                entity.HasIndex(e => e.Email).IsUnique();
             });
 
             modelBuilder.Entity<User>().ToTable("users");
@@ -55,7 +58,7 @@ namespace DotnetBoilerplate.Infrastructure
 
             var adminRole = new Role { Id = 1, Name = "Admin", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow };
             var memberRole = new Role { Id = 2, Name = "Member", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow };
-            string defaultPassword = BCrypt.Net.BCrypt.HashPassword("123456");
+            var defaultPassword = BCrypt.Net.BCrypt.HashPassword("123456");
             var user1 = new User { Id = 1, FullName = "Admin", Email = "admin@email.com", Password = defaultPassword, RoleId = 1, IsSuperUser = true, IsStaff = false, IsActive = true, CreatedAt = DateTime.UtcNow, DateJoined = DateTime.UtcNow, LastLogin = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow };
             var user2 = new User { Id = 2, FullName = "Long", Email = "long@email.com", Password = defaultPassword, RoleId = 2, IsSuperUser = false, IsStaff = false, IsActive = true, CreatedAt = DateTime.UtcNow, DateJoined = DateTime.UtcNow, LastLogin = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow };
 

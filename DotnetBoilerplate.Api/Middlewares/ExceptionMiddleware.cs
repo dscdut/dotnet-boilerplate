@@ -1,8 +1,9 @@
 ﻿using DotnetBoilerplate.Application.Exceptions;
 using DotnetBoilerplate.Domain.Enums;
 using System.Text.Json;
+using FluentValidation;
 
-namespace DotnetBoilerplate.Api.Middleware
+namespace DotnetBoilerplate.Api.Middlewares
 {
     public class ExceptionMiddleware
     {
@@ -23,6 +24,20 @@ namespace DotnetBoilerplate.Api.Middleware
                 context.Response.StatusCode = ex.StatusCode;
                 context.Response.ContentType = "application/json";
                 var response = new { error_code = ex.ErrorCode, message = ex.Message };
+                await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+            }
+            catch (ValidationException ex)
+            {
+                context.Response.ContentType = "application/json";
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+
+                var response = new
+                {
+                    error_code = ErrorCodeEnum.InvalidSyntax,
+                    message = "Invalid syntax",
+                    details = ex.Errors.Select(e => e.ErrorMessage)
+                };
+
                 await context.Response.WriteAsync(JsonSerializer.Serialize(response));
             }
             catch (Exception)

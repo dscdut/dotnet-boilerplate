@@ -2,10 +2,10 @@
 using DotnetBoilerplate.Application;
 using DotnetBoilerplate.Infrastructure;
 using Microsoft.OpenApi.Models;
-using DotnetBoilerplate.Api.Middleware;
+using DotnetBoilerplate.Api.Middlewares;
 using FluentValidation;
 using System.Reflection;
-using DotnetBoilerplate.Api.Filter;
+using DotnetBoilerplate.Api.Filters;
 
 namespace DotnetBoilerplate.Api
 {

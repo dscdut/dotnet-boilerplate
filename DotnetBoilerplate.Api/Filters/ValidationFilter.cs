@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace DotnetBoilerplate.Api.Filter
+namespace DotnetBoilerplate.Api.Filters
 {
     public class ValidationFilter : IActionFilter
     {

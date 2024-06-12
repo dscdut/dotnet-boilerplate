@@ -3,7 +3,7 @@ using DotnetBoilerplate.Domain.Enums;
 using System.Text.Json;
 using FluentValidation;
 
-namespace DotnetBoilerplate.Api.Middleware
+namespace DotnetBoilerplate.Api.Middlewares
 {
     public class ExceptionMiddleware
     {

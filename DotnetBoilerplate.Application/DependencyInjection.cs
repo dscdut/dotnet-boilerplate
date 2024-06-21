@@ -2,8 +2,11 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using DotnetBoilerplate.Application.Services;
 using System.Text;
+using DotnetBoilerplate.Application.Services.User;
+using DotnetBoilerplate.Application.Services.Auth;
+using DotnetBoilerplate.Application.Services.CurrentUser;
+using DotnetBoilerplate.Application.Services.Admin;
 
 namespace DotnetBoilerplate.Application
 {
@@ -15,6 +18,7 @@ namespace DotnetBoilerplate.Application
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<IAdminService, AdminService>();
             services.AddHttpContextAccessor();
 
             var key = Encoding.ASCII.GetBytes(configration.GetSection("JwtSettings:Secret").Value!);

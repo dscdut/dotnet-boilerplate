@@ -1,7 +1,7 @@
 using DotnetBoilerplate.Application.Dtos;
 using DotnetBoilerplate.Domain.Payloads;
 
-namespace DotnetBoilerplate.Application.Services;
+namespace DotnetBoilerplate.Application.Services.Auth;
 
 
 public interface IAuthService

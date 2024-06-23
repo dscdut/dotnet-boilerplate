@@ -8,9 +8,12 @@ namespace DotnetBoilerplate.Api.Middlewares
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
-        public ExceptionMiddleware(RequestDelegate next)
+        private readonly IWebHostEnvironment _env;
+
+        public ExceptionMiddleware(RequestDelegate next, IWebHostEnvironment env)
         {
             _next = next;
+            _env = env;
         }
 
         public async Task Invoke(HttpContext context)
@@ -44,13 +47,17 @@ namespace DotnetBoilerplate.Api.Middlewares
             {
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 context.Response.ContentType = "application/json";
-                var response = new
-                {
-                    error_code = ErrorCodeEnum.ServerError,
-                    message = "An unexpected error occurred on the server",
-                    detail = ex.Message
-                };
-                await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+                await context.Response.WriteAsync(JsonSerializer.Serialize(
+                    _env.IsDevelopment() ? new
+                    {
+                        error_code = ErrorCodeEnum.ServerError,
+                        message = "An unexpected error occurred on the server",
+                        detail = ex.Message
+                    } : new
+                    {
+                        error_code = ErrorCodeEnum.ServerError,
+                        message = "An unexpected error occurred on the server"
+                    }, null!));
             }
         }
     }

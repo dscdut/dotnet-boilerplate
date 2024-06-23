@@ -37,6 +37,7 @@ namespace DotnetBoilerplate.Infrastructure.Migrations
                         .HasAnnotation("Relational:JsonPropertyName", "created_at");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("name");
 
@@ -47,22 +48,22 @@ namespace DotnetBoilerplate.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("roles", (string)null);
+                    b.ToTable("roles_role", (string)null);
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 6, 4, 7, 24, 43, 586, DateTimeKind.Utc).AddTicks(9633),
-                            Name = "Admin",
-                            UpdatedAt = new DateTime(2024, 6, 4, 7, 24, 43, 586, DateTimeKind.Utc).AddTicks(9634)
+                            CreatedAt = new DateTime(2024, 6, 23, 3, 0, 20, 90, DateTimeKind.Utc).AddTicks(5208),
+                            Name = "admin",
+                            UpdatedAt = new DateTime(2024, 6, 23, 3, 0, 20, 90, DateTimeKind.Utc).AddTicks(5209)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2024, 6, 4, 7, 24, 43, 586, DateTimeKind.Utc).AddTicks(9635),
-                            Name = "Member",
-                            UpdatedAt = new DateTime(2024, 6, 4, 7, 24, 43, 586, DateTimeKind.Utc).AddTicks(9636)
+                            CreatedAt = new DateTime(2024, 6, 23, 3, 0, 20, 90, DateTimeKind.Utc).AddTicks(5210),
+                            Name = "member",
+                            UpdatedAt = new DateTime(2024, 6, 23, 3, 0, 20, 90, DateTimeKind.Utc).AddTicks(5211)
                         });
                 });
 
@@ -85,12 +86,14 @@ namespace DotnetBoilerplate.Infrastructure.Migrations
                         .HasColumnName("date_joined");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("email");
 
                     b.Property<string>("FullName")
+                        .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("full_name");
+                        .HasColumnName("name");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean")
@@ -108,11 +111,8 @@ namespace DotnetBoilerplate.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_login");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("text")
-                        .HasColumnName("name");
-
                     b.Property<string>("Password")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("password");
 
@@ -132,38 +132,38 @@ namespace DotnetBoilerplate.Infrastructure.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("users", (string)null);
+                    b.ToTable("users_user", (string)null);
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 6, 4, 7, 24, 43, 720, DateTimeKind.Utc).AddTicks(5040),
-                            DateJoined = new DateTime(2024, 6, 4, 7, 24, 43, 720, DateTimeKind.Utc).AddTicks(5075),
+                            CreatedAt = new DateTime(2024, 6, 23, 3, 0, 20, 217, DateTimeKind.Utc).AddTicks(9341),
+                            DateJoined = new DateTime(2024, 6, 23, 3, 0, 20, 217, DateTimeKind.Utc).AddTicks(9401),
                             Email = "admin@email.com",
                             FullName = "Admin",
                             IsActive = true,
                             IsStaff = false,
                             IsSuperUser = true,
-                            LastLogin = new DateTime(2024, 6, 4, 7, 24, 43, 720, DateTimeKind.Utc).AddTicks(5075),
-                            Password = "$2a$11$TASua5/ytWoxMgdleaswm.0ko7z1rZ7VzqobO7zBGgB9hUz1ulDY6",
+                            LastLogin = new DateTime(2024, 6, 23, 3, 0, 20, 217, DateTimeKind.Utc).AddTicks(9402),
+                            Password = "$2a$11$AG9aV9QBRiDHauLzwJOfl.ok2TnLDZuwtlVZccywhU1BcCJwYFyfS",
                             RoleId = 1,
-                            UpdatedAt = new DateTime(2024, 6, 4, 7, 24, 43, 720, DateTimeKind.Utc).AddTicks(5081)
+                            UpdatedAt = new DateTime(2024, 6, 23, 3, 0, 20, 217, DateTimeKind.Utc).AddTicks(9409)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2024, 6, 4, 7, 24, 43, 720, DateTimeKind.Utc).AddTicks(5084),
-                            DateJoined = new DateTime(2024, 6, 4, 7, 24, 43, 720, DateTimeKind.Utc).AddTicks(5084),
+                            CreatedAt = new DateTime(2024, 6, 23, 3, 0, 20, 217, DateTimeKind.Utc).AddTicks(9413),
+                            DateJoined = new DateTime(2024, 6, 23, 3, 0, 20, 217, DateTimeKind.Utc).AddTicks(9413),
                             Email = "long@email.com",
                             FullName = "Long",
                             IsActive = true,
                             IsStaff = false,
                             IsSuperUser = false,
-                            LastLogin = new DateTime(2024, 6, 4, 7, 24, 43, 720, DateTimeKind.Utc).AddTicks(5085),
-                            Password = "$2a$11$TASua5/ytWoxMgdleaswm.0ko7z1rZ7VzqobO7zBGgB9hUz1ulDY6",
+                            LastLogin = new DateTime(2024, 6, 23, 3, 0, 20, 217, DateTimeKind.Utc).AddTicks(9414),
+                            Password = "$2a$11$AG9aV9QBRiDHauLzwJOfl.ok2TnLDZuwtlVZccywhU1BcCJwYFyfS",
                             RoleId = 2,
-                            UpdatedAt = new DateTime(2024, 6, 4, 7, 24, 43, 720, DateTimeKind.Utc).AddTicks(5085)
+                            UpdatedAt = new DateTime(2024, 6, 23, 3, 0, 20, 217, DateTimeKind.Utc).AddTicks(9414)
                         });
                 });
 

@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DotnetBoilerplate.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,7 +20,7 @@ namespace DotnetBoilerplate.Infrastructure.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "text", nullable: true),
+                    name = table.Column<string>(type: "text", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -35,9 +35,9 @@ namespace DotnetBoilerplate.Infrastructure.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "text", nullable: true),
-                    email = table.Column<string>(type: "text", nullable: true),
-                    password = table.Column<string>(type: "text", nullable: true),
+                    name = table.Column<string>(type: "text", nullable: false),
+                    email = table.Column<string>(type: "text", nullable: false),
+                    password = table.Column<string>(type: "text", nullable: false),
                     last_login = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     is_superuser = table.Column<bool>(type: "boolean", nullable: false),
                     is_staff = table.Column<bool>(type: "boolean", nullable: false),
@@ -63,18 +63,24 @@ namespace DotnetBoilerplate.Infrastructure.Migrations
                 columns: new[] { "id", "created_at", "name", "updated_at" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 5, 25, 10, 17, 33, 701, DateTimeKind.Utc).AddTicks(467), "Admin", new DateTime(2024, 5, 25, 10, 17, 33, 701, DateTimeKind.Utc).AddTicks(468) },
-                    { 2, new DateTime(2024, 5, 25, 10, 17, 33, 701, DateTimeKind.Utc).AddTicks(469), "Member", new DateTime(2024, 5, 25, 10, 17, 33, 701, DateTimeKind.Utc).AddTicks(470) }
+                    { 1, new DateTime(2024, 6, 23, 3, 0, 20, 90, DateTimeKind.Utc).AddTicks(5208), "admin", new DateTime(2024, 6, 23, 3, 0, 20, 90, DateTimeKind.Utc).AddTicks(5209) },
+                    { 2, new DateTime(2024, 6, 23, 3, 0, 20, 90, DateTimeKind.Utc).AddTicks(5210), "member", new DateTime(2024, 6, 23, 3, 0, 20, 90, DateTimeKind.Utc).AddTicks(5211) }
                 });
 
             migrationBuilder.InsertData(
                 table: "users_user",
-                columns: new[] { "id", "created_at", "date_joined", "email", "is_active", "is_staff", "is_superuser", "last_login", "name", "password", "role_id", "updated_at" },
+                columns: new[] { "id", "created_at", "date_joined", "email", "name", "is_active", "is_staff", "is_superuser", "last_login", "password", "role_id", "updated_at" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 5, 25, 10, 17, 33, 824, DateTimeKind.Utc).AddTicks(5856), new DateTime(2024, 5, 25, 10, 17, 33, 824, DateTimeKind.Utc).AddTicks(5856), "admin@email.com", true, false, true, new DateTime(2024, 5, 25, 10, 17, 33, 824, DateTimeKind.Utc).AddTicks(5857), "Admin", "$2a$11$pZHX2y7QdIXaEr.CLm6h/ObJegBir0rYQE5Jzm/MALyiwqzb11Uti", 1, new DateTime(2024, 5, 25, 10, 17, 33, 824, DateTimeKind.Utc).AddTicks(5860) },
-                    { 2, new DateTime(2024, 5, 25, 10, 17, 33, 824, DateTimeKind.Utc).AddTicks(5892), new DateTime(2024, 5, 25, 10, 17, 33, 824, DateTimeKind.Utc).AddTicks(5893), "long@email.com", true, false, false, new DateTime(2024, 5, 25, 10, 17, 33, 824, DateTimeKind.Utc).AddTicks(5893), "Long", "$2a$11$pZHX2y7QdIXaEr.CLm6h/ObJegBir0rYQE5Jzm/MALyiwqzb11Uti", 2, new DateTime(2024, 5, 25, 10, 17, 33, 824, DateTimeKind.Utc).AddTicks(5894) }
+                    { 1, new DateTime(2024, 6, 23, 3, 0, 20, 217, DateTimeKind.Utc).AddTicks(9341), new DateTime(2024, 6, 23, 3, 0, 20, 217, DateTimeKind.Utc).AddTicks(9401), "admin@email.com", "Admin", true, false, true, new DateTime(2024, 6, 23, 3, 0, 20, 217, DateTimeKind.Utc).AddTicks(9402), "$2a$11$AG9aV9QBRiDHauLzwJOfl.ok2TnLDZuwtlVZccywhU1BcCJwYFyfS", 1, new DateTime(2024, 6, 23, 3, 0, 20, 217, DateTimeKind.Utc).AddTicks(9409) },
+                    { 2, new DateTime(2024, 6, 23, 3, 0, 20, 217, DateTimeKind.Utc).AddTicks(9413), new DateTime(2024, 6, 23, 3, 0, 20, 217, DateTimeKind.Utc).AddTicks(9413), "long@email.com", "Long", true, false, false, new DateTime(2024, 6, 23, 3, 0, 20, 217, DateTimeKind.Utc).AddTicks(9414), "$2a$11$AG9aV9QBRiDHauLzwJOfl.ok2TnLDZuwtlVZccywhU1BcCJwYFyfS", 2, new DateTime(2024, 6, 23, 3, 0, 20, 217, DateTimeKind.Utc).AddTicks(9414) }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_users_user_email",
+                table: "users_user",
+                column: "email",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_users_user_role_id",

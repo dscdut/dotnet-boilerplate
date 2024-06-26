@@ -2,7 +2,7 @@
 
 namespace DotnetBoilerplate.Domain.Entities
 {
-    public class User : BaseDomainEntity
+    public class User : IntegerIDTrackable
     {
         public string FullName { get; set; } = null!;
         public string Email { get; set; } = null!;

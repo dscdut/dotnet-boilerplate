@@ -5,8 +5,6 @@ using DotnetBoilerplate.Infrastructure.ExternalServices;
 using DotnetBoilerplate.Infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
-using DotnetBoilerplate.Domain.Enums;
 
 namespace DotnetBoilerplate.Infrastructure
 {
@@ -16,11 +14,8 @@ namespace DotnetBoilerplate.Infrastructure
         {
             services.AddDbContext<DataContext>(options =>
             {
-                var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
-                if (string.IsNullOrEmpty(connectionString))
-                {
-                    connectionString = configuration.GetConnectionString("WebApiDatabase");
-                }
+                var connectionString = configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
                 options.UseNpgsql(connectionString);
             });
 

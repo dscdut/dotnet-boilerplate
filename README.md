@@ -18,7 +18,7 @@ _DotnetBoilerplate_ is a **starter kit**. This project follows [Clean Architectu
     .
     ├── DotnetBoilerplate.Domain
     │   ├── Entities # Store entity mapping with table in database
-    │   ├── Enums # Constant in project
+    │   ├── Enums 
     │   └── Payloads # Object to store data that specific to project
     ├── DotnetBoilerplate.Application
     │   ├── Dtos # Mostly use when receive data and return data to client
@@ -46,6 +46,7 @@ _DotnetBoilerplate_ is a **starter kit**. This project follows [Clean Architectu
     └── README.md
 
 ## Customization
+- Create _appsettings.Development.json_ file in _DotnetBoilerplate.Api_ folder to store environment variables for development environment. All your configurations in _appsettings.json_ file will be overridden by _appsettings.Development.json_ file.
 
 - You can customize `token information (secret key, expiry date) ` in [_appsettings.json_](DotnetBoilerplate.Api/appsettings.json) file.
 
@@ -61,11 +62,9 @@ _DotnetBoilerplate_ is a **starter kit**. This project follows [Clean Architectu
 
 ```json
 "ConnectionStrings": {
-    "WebApiDatabase": "Host=localhost; Port=5432; Database=dotnet-boilerplate; Username=postgres; Password=postgres"
+    "DefaultConnection": "Host=localhost; Port=5432; Database=dotnet-boilerplate; Username=postgres; Password=postgres"
   },
 ```
-
-- If you run server along with database using docker-compose, the `CONNECTION_STRING` in [docker-compose.yml](docker-compose.yml#L13) file will be used.
 
 ## Useful commands
 

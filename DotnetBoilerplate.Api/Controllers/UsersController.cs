@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using DotnetBoilerplate.Api.Params;
 using DotnetBoilerplate.Application.Dtos;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using DotnetBoilerplate.Application.Services.User;
-using DotnetBoilerplate.Application.Services.CurrentUser;
 
 namespace DotnetBoilerplate.Api.Controllers
 {

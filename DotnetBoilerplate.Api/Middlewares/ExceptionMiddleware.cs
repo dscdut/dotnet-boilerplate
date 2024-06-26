@@ -47,17 +47,21 @@ namespace DotnetBoilerplate.Api.Middlewares
             {
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 context.Response.ContentType = "application/json";
-                await context.Response.WriteAsync(JsonSerializer.Serialize(
-                    _env.IsDevelopment() ? new
-                    {
-                        error_code = ErrorCodeEnum.ServerError,
-                        message = "An unexpected error occurred on the server",
-                        detail = ex.Message
-                    } : new
-                    {
-                        error_code = ErrorCodeEnum.ServerError,
-                        message = "An unexpected error occurred on the server"
-                    }, null!));
+                if (_env.IsDevelopment())
+                {
+                    await context.Response.WriteAsync(JsonSerializer.Serialize(
+                      new
+                      {
+                          error_code = ErrorCodeEnum.ServerError,
+                          message = "An unexpected error occurred on the server",
+                          detail = ex.Message
+                      }));
+                }
+                else await context.Response.WriteAsync(JsonSerializer.Serialize(new
+                {
+                    error_code = ErrorCodeEnum.ServerError,
+                    message = "An unexpected error occurred on the server"
+                }));
             }
         }
     }

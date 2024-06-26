@@ -58,7 +58,7 @@ namespace DotnetBoilerplate.Api
             builder.Services.AddApplication(builder.Configuration);
             builder.Services.AddInfrastructure(builder.Configuration);
             var app = builder.Build();
-
+            app.UseMiddleware<ExceptionMiddleware>();
             app.UseCors(builder =>
             {
                 builder.WithOrigins(app.Configuration["AllowedHosts"] ?? "localhost")
@@ -72,7 +72,6 @@ namespace DotnetBoilerplate.Api
                 app.UseSwaggerUI();
             }
             app.UseHttpsRedirection();
-            app.UseMiddleware<ExceptionMiddleware>();
             app.UseAuthorization();
             app.MapControllers();
             app.Run();

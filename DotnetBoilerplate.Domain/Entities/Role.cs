@@ -2,9 +2,9 @@
 
 namespace DotnetBoilerplate.Domain.Entities
 {
-    public class Role : BaseDomainEntity
+    public class Role : IntegerIDTrackable
     {
         public string Name { get; set; } = null!;
-        public List<User> Users { get; set; } = [];
+        public ICollection<User> Users { get; set; } = [];
     }
 }

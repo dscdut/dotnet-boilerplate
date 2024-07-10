@@ -22,6 +22,13 @@ namespace DotnetBoilerplate.Api.Middlewares
             {
                 await _next(context);
             }
+            catch (NotFoundException ex)
+            {
+                context.Response.StatusCode = ex.StatusCode;
+                context.Response.ContentType = "application/json";
+                var response = new { error_code = ex.ErrorCode, message = "The resource does not exist", details = new string[] { ex.Message } };
+                await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+            }
             catch (CustomException ex)
             {
                 context.Response.StatusCode = ex.StatusCode;

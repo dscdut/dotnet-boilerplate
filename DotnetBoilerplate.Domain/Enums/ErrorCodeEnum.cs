@@ -7,8 +7,8 @@
         ServerError = 103,
         InvalidSyntax = 104,
         ExistedEmail = 108,
-        InvalidToken = 109,
-        NotFound = 112,
+        NotLogedIn = 116,
+        NotFound = 115,
         NotAuthorized = 113,
     }
 }

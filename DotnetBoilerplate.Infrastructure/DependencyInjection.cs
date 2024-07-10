@@ -24,6 +24,19 @@ namespace DotnetBoilerplate.Infrastructure
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
 
+            services.AddScoped<VNPayService>();
+            services.AddScoped<MoMoService>();
+
+            services.AddScoped<Func<string, IPaymentService>>(serviceProvider => key =>
+            {
+                return key switch
+                {
+                    "VNPay" => serviceProvider.GetService<VNPayService>() as IPaymentService,
+                    "MoMo" => serviceProvider.GetService<MoMoService>() as IPaymentService,
+                    _ => throw new KeyNotFoundException($"Payment service not found for key: {key}")
+                };
+            });
+
             return services;
         }
     }

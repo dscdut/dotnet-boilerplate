@@ -12,16 +12,15 @@ namespace DotnetBoilerplate.Application
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configration)
+        public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAutoMapper(typeof(DependencyInjection).Assembly);
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IAdminService, AdminService>();
-            services.AddHttpContextAccessor();
 
-            var key = Encoding.ASCII.GetBytes(configration.GetSection("JwtSettings:Secret").Value!);
+            var key = Encoding.ASCII.GetBytes(configuration.GetSection("JwtSettings:Secret").Value!);
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

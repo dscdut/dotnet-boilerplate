@@ -1,15 +1,10 @@
 ﻿using DotnetBoilerplate.Application.Dtos;
 using DotnetBoilerplate.Application.ExternalServices;
+using DotnetBoilerplate.Domain.Entities;
 using DotnetBoilerplate.Infrastructure.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using Org.BouncyCastle.Asn1.Ocsp;
-using System;
 using System.Collections.Specialized;
-using System.Globalization;
-using System.Net;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace DotnetBoilerplate.Infrastructure.ExternalServices
 {
@@ -30,7 +25,7 @@ namespace DotnetBoilerplate.Infrastructure.ExternalServices
             _vnp_TmnCode = _configuration.GetSection("VNPaySettings:VnPayTmnCode").Value;
         }
 
-        public PaymentResponse ProcessPayment(PaymentRequest paymentRequest)
+        public PaymentResponse ProcessPayment(PaymentRequest paymentRequest, Order order)
         {
             var vnPayLibrary = new VnPayLibrary();
 
@@ -39,13 +34,13 @@ namespace DotnetBoilerplate.Infrastructure.ExternalServices
             vnPayLibrary.AddRequestData("vnp_TmnCode", _vnp_TmnCode);
             vnPayLibrary.AddRequestData("vnp_Amount", (paymentRequest.Amount * 100).ToString());
             vnPayLibrary.AddRequestData("vnp_CurrCode", paymentRequest.Currency);
-            vnPayLibrary.AddRequestData("vnp_TxnRef", paymentRequest.OrderId);
+            vnPayLibrary.AddRequestData("vnp_TxnRef", order.Id.ToString());
             vnPayLibrary.AddRequestData("vnp_OrderInfo", paymentRequest.OrderInfo);
             vnPayLibrary.AddRequestData("vnp_ReturnUrl", paymentRequest.ReturnUrl);
-            vnPayLibrary.AddRequestData("vnp_IpAddr", Utils.Utils.GetIpAddress(_httpContextAccessor.HttpContext));
+            vnPayLibrary.AddRequestData("vnp_IpAddr", PayLibUtils.GetIpAddress(_httpContextAccessor.HttpContext));
             vnPayLibrary.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
-            vnPayLibrary.AddRequestData("vnp_Locale", "vn");
-            vnPayLibrary.AddRequestData("vnp_OrderType", "other");
+            vnPayLibrary.AddRequestData("vnp_Locale", paymentRequest.Locale);
+            vnPayLibrary.AddRequestData("vnp_OrderType", paymentRequest.OrderType);
 
             string paymentUrl = vnPayLibrary.CreateRequestUrl(_vnp_Url, _vnp_HashSecret);
 
@@ -55,21 +50,23 @@ namespace DotnetBoilerplate.Infrastructure.ExternalServices
             };
         }
 
-        public VNPayPaymentNotificationResponse HandlePaymentNotification(NameValueCollection queryString)
+        public async Task<IPaymentNotificationResponse> HandlePaymentNotification(NameValueCollection queryString, Func<int, Task>? onSuccess, Func<int, Task>? onFailure)
         {
             var vnPayLibrary = new VnPayLibrary();
             foreach (string key in queryString.AllKeys)
             {
                 vnPayLibrary.AddResponseData(key, queryString[key]);
             }
-            string vnp_SecureHash = queryString["vnp_SecureHash"];
+            string vnp_SecureHash = vnPayLibrary.GetResponseData("vnp_SecureHash");
             bool isValidSignature = vnPayLibrary.ValidateSignature(vnp_SecureHash, _vnp_HashSecret);
 
             if (isValidSignature)
             {
-                string vnp_ResponseCode = queryString["vnp_ResponseCode"];
+                string vnp_ResponseCode = vnPayLibrary.GetResponseData("vnp_ResponseCode");
                 if (vnp_ResponseCode == "00")
                 {
+                    if (onSuccess != null)
+                        await onSuccess(int.Parse(vnPayLibrary.GetResponseData("vnp_TxnRef")));
                     return new VNPayPaymentNotificationResponse
                     {
                         RspCode = "00",
@@ -78,6 +75,8 @@ namespace DotnetBoilerplate.Infrastructure.ExternalServices
                 }
                 else
                 {
+                    if (onFailure != null)
+                        await onFailure(int.Parse(vnPayLibrary.GetResponseData("vnp_TxnRef")));
                     return new VNPayPaymentNotificationResponse
                     {
                         RspCode = vnp_ResponseCode,
@@ -94,25 +93,31 @@ namespace DotnetBoilerplate.Infrastructure.ExternalServices
                 };
             }
         }
-    }
 
-    public class RandomAlphanumeric
-    {
-        private static readonly char[] chars =
-            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".ToCharArray();
-
-        public static string GenerateRandomAlphanumeric(int length)
+        public VerifyPaymentResponse VerifyPaymentResponse(NameValueCollection queryString)
         {
-            var random = new Random();
-            var stringBuilder = new StringBuilder(length);
-
-            for (int i = 0; i < length; i++)
+            var vnPayLibrary = new VnPayLibrary();
+            foreach (string key in queryString.AllKeys)
             {
-                int randomIndex = random.Next(chars.Length);
-                stringBuilder.Append(chars[randomIndex]);
+                vnPayLibrary.AddResponseData(key, queryString[key]);
             }
-
-            return stringBuilder.ToString();
+            string vnp_SecureHash = vnPayLibrary.GetResponseData("vnp_SecureHash");
+            bool isValidSignature = vnPayLibrary.ValidateSignature(vnp_SecureHash, _vnp_HashSecret);
+            string vnp_ResponseCode = vnPayLibrary.GetResponseData("vnp_ResponseCode");
+            if (isValidSignature && vnp_ResponseCode == "00")
+            {
+                return new VerifyPaymentResponse
+                {
+                    Message = "Success"
+                };
+            }
+            else
+            {
+                return new VerifyPaymentResponse
+                {
+                    Message = "Failed"
+                };
+            }
         }
     }
 }

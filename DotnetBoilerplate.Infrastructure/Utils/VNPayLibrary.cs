@@ -63,7 +63,7 @@ namespace DotnetBoilerplate.Infrastructure.Utils
 
                 signData = signData.Remove(data.Length - 1, 1);
             }
-            string vnp_SecureHash = Utils.HmacSHA512(vnp_HashSecret, signData);
+            string vnp_SecureHash = PayLibUtils.HmacSHA512(vnp_HashSecret, signData);
             baseUrl += "vnp_SecureHash=" + vnp_SecureHash;
 
             return baseUrl;
@@ -78,7 +78,7 @@ namespace DotnetBoilerplate.Infrastructure.Utils
         public bool ValidateSignature(string inputHash, string secretKey)
         {
             string rspRaw = GetResponseData();
-            string myChecksum = Utils.HmacSHA512(secretKey, rspRaw);
+            string myChecksum = PayLibUtils.HmacSHA512(secretKey, rspRaw);
             return myChecksum.Equals(inputHash, StringComparison.InvariantCultureIgnoreCase);
         }
         private string GetResponseData()
@@ -109,37 +109,6 @@ namespace DotnetBoilerplate.Infrastructure.Utils
         }
 
         #endregion
-    }
-
-    public class Utils
-    {
-        public static String HmacSHA512(string key, String inputData)
-        {
-            var hash = new StringBuilder();
-            byte[] keyBytes = Encoding.UTF8.GetBytes(key);
-            byte[] inputBytes = Encoding.UTF8.GetBytes(inputData);
-            using (var hmac = new HMACSHA512(keyBytes))
-            {
-                byte[] hashValue = hmac.ComputeHash(inputBytes);
-                foreach (var theByte in hashValue)
-                {
-                    hash.Append(theByte.ToString("x2"));
-                }
-            }
-
-            return hash.ToString();
-        }
-        public static string GetIpAddress(HttpContext httpContext)
-        {
-            string ipAddress = httpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
-
-            if (string.IsNullOrEmpty(ipAddress) || (ipAddress.ToLower() == "unknown") || ipAddress.Length > 45)
-            {
-                ipAddress = httpContext.Connection.RemoteIpAddress?.ToString();
-            }
-
-            return ipAddress;
-        }
     }
 
     public class VnPayCompare : IComparer<string>

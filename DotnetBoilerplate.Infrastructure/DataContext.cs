@@ -9,9 +9,11 @@ namespace DotnetBoilerplate.Infrastructure
 
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<Order> Orders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // User Entity Configuration
             modelBuilder.Entity<User>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("id");
@@ -39,6 +41,7 @@ namespace DotnetBoilerplate.Infrastructure
 
             modelBuilder.Entity<User>().ToTable("users_user");
 
+            // Role Entity Configuration
             modelBuilder.Entity<Role>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("id");
@@ -55,6 +58,24 @@ namespace DotnetBoilerplate.Infrastructure
                 .WithOne(u => u.Role)
                 .HasForeignKey(u => u.RoleId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Order Entity Configuration
+            modelBuilder.Entity<Order>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.CustomerName).HasColumnName("customer_name");
+                entity.Property(e => e.CustomerPhone).HasColumnName("customer_phone");
+                entity.Property(e => e.Amount).HasColumnName("amount");
+                entity.Property(e => e.Currency).HasColumnName("currency");
+                // add OrderStatusEnum as status int column
+                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+                entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+
+                entity.Property(e => e.CreatedAt).HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+                entity.Property(e => e.UpdatedAt).HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+            });
+            modelBuilder.Entity<Order>().ToTable("orders_order");
 
             var adminRole = new Role { Id = 1, Name = "admin", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow };
             var memberRole = new Role { Id = 2, Name = "member", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow };

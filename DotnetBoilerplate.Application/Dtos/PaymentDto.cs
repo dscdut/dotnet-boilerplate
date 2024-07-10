@@ -4,11 +4,13 @@ namespace DotnetBoilerplate.Application.Dtos
 {
     public class PaymentRequest
     {
-        public string OrderId { get; set; }
         public decimal Amount { get; set; }
-        public string Currency { get; set; }
-        public string ReturnUrl { get; set; }
+        public string Currency { get; set; } = "VND";
         public string OrderInfo { get; set; }
+        public string ReturnUrl { get; set; }
+        public string OrderType { get; set; } = "other";
+        public string Locale { get; set; } = "vn";
+        public string Provider { get; set; } = "VNPay";
     }
 
     public class PaymentResponse
@@ -25,5 +27,8 @@ namespace DotnetBoilerplate.Application.Dtos
         public string Message { get; set; }
     }
 
-
+    public class VerifyPaymentResponse
+    {
+        public string Message { get; set; }
+    }
 }

@@ -23,6 +23,7 @@ namespace DotnetBoilerplate.Infrastructure
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
 
             services.AddScoped<VNPayService>();
             services.AddScoped<MoMoService>();

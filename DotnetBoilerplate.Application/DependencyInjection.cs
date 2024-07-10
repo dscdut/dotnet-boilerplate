@@ -7,6 +7,7 @@ using DotnetBoilerplate.Application.Services.User;
 using DotnetBoilerplate.Application.Services.Auth;
 using DotnetBoilerplate.Application.Services.CurrentUser;
 using DotnetBoilerplate.Application.Services.Admin;
+using DotnetBoilerplate.Application.Services.Order;
 
 namespace DotnetBoilerplate.Application
 {
@@ -19,6 +20,7 @@ namespace DotnetBoilerplate.Application
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IAdminService, AdminService>();
+            services.AddScoped<IOrderService, OrderService>();
 
             var key = Encoding.ASCII.GetBytes(configuration.GetSection("JwtSettings:Secret").Value!);
             services.AddAuthentication(x =>

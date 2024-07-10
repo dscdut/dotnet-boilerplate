@@ -114,3 +114,5 @@ dotnet ef database update -p DotnetBoilerplate.Infrastructure\DotnetBoilerplate.
 ```
 Update-Database -p DotnetBoilerplate.Infrastructure -s DotnetBoilerplate.Api
 ```
+
+### Finally, go to [localhost:3000/swagger/index.html](localhost:3000/swagger/index.html) for swagger

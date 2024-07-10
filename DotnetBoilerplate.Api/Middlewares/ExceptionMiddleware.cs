@@ -61,7 +61,7 @@ namespace DotnetBoilerplate.Api.Middlewares
                       {
                           error_code = ErrorCodeEnum.ServerError,
                           message = "An unexpected error occurred on the server",
-                          detail = ex.Message
+                          detail = ex.InnerException?.Message
                       }));
                 }
                 else await context.Response.WriteAsync(JsonSerializer.Serialize(new

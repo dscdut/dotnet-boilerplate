@@ -16,6 +16,9 @@ namespace DotnetBoilerplate.Application.Profiles
 
             // Role profile
             CreateMap<Role, RoleDto>().ReverseMap();
+
+            // Order profile
+            CreateMap<Order, PaymentRequest>().ReverseMap();
         }
     }
 }

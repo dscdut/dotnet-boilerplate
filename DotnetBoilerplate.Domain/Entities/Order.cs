@@ -10,5 +10,9 @@ namespace DotnetBoilerplate.Domain.Entities
         public decimal Amount { get; set; }
         public string Currency { get; set; } = null!;
         public OrderStatusEnum Status { get; set; } = OrderStatusEnum.WaitingForPayment;
+        public int PaymentMethodId { get; set; }
+        public PaymentMethod PaymentMethod { get; set; } = null!;
+        public string? PaymentOrderId { get; set; } = null;
+        public int UserId { get; set; }
     }
 }

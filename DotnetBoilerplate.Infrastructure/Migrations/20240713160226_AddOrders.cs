@@ -4,6 +4,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace DotnetBoilerplate.Infrastructure.Migrations
 {
     /// <inheritdoc />
@@ -13,7 +15,22 @@ namespace DotnetBoilerplate.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "orders_order",
+                name: "payment_methods",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "text", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_payment_methods", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "orders",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
@@ -23,12 +40,30 @@ namespace DotnetBoilerplate.Infrastructure.Migrations
                     amount = table.Column<decimal>(type: "numeric", nullable: false),
                     currency = table.Column<string>(type: "text", nullable: false),
                     status = table.Column<int>(type: "integer", nullable: false),
+                    payment_method_id = table.Column<int>(type: "integer", nullable: false),
+                    payment_order_id = table.Column<string>(type: "text", nullable: true),
+                    user_id = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_orders_order", x => x.id);
+                    table.PrimaryKey("PK_orders", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_orders_payment_methods_payment_method_id",
+                        column: x => x.payment_method_id,
+                        principalTable: "payment_methods",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.InsertData(
+                table: "payment_methods",
+                columns: new[] { "id", "created_at", "name", "updated_at" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2437), "MoMo", new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2438) },
+                    { 2, new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2439), "VNPay", new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2440) }
                 });
 
             migrationBuilder.UpdateData(
@@ -36,35 +71,43 @@ namespace DotnetBoilerplate.Infrastructure.Migrations
                 keyColumn: "id",
                 keyValue: 1,
                 columns: new[] { "created_at", "updated_at" },
-                values: new object[] { new DateTime(2024, 7, 10, 14, 45, 21, 925, DateTimeKind.Utc).AddTicks(4964), new DateTime(2024, 7, 10, 14, 45, 21, 925, DateTimeKind.Utc).AddTicks(4964) });
+                values: new object[] { new DateTime(2024, 7, 13, 16, 2, 25, 688, DateTimeKind.Utc).AddTicks(8908), new DateTime(2024, 7, 13, 16, 2, 25, 688, DateTimeKind.Utc).AddTicks(8908) });
 
             migrationBuilder.UpdateData(
                 table: "roles_role",
                 keyColumn: "id",
                 keyValue: 2,
                 columns: new[] { "created_at", "updated_at" },
-                values: new object[] { new DateTime(2024, 7, 10, 14, 45, 21, 925, DateTimeKind.Utc).AddTicks(4966), new DateTime(2024, 7, 10, 14, 45, 21, 925, DateTimeKind.Utc).AddTicks(4966) });
+                values: new object[] { new DateTime(2024, 7, 13, 16, 2, 25, 688, DateTimeKind.Utc).AddTicks(8916), new DateTime(2024, 7, 13, 16, 2, 25, 688, DateTimeKind.Utc).AddTicks(8917) });
 
             migrationBuilder.UpdateData(
                 table: "users_user",
                 keyColumn: "id",
                 keyValue: 1,
                 columns: new[] { "created_at", "date_joined", "last_login", "password", "updated_at" },
-                values: new object[] { new DateTime(2024, 7, 10, 14, 45, 22, 48, DateTimeKind.Utc).AddTicks(9156), new DateTime(2024, 7, 10, 14, 45, 22, 48, DateTimeKind.Utc).AddTicks(9183), new DateTime(2024, 7, 10, 14, 45, 22, 48, DateTimeKind.Utc).AddTicks(9183), "$2a$11$DZHMDBClWwvEEXmVqUZY/OIJbgoQX/t7eOWdlV6NO/wnXEAerr7dK", new DateTime(2024, 7, 10, 14, 45, 22, 48, DateTimeKind.Utc).AddTicks(9186) });
+                values: new object[] { new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2423), new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2423), new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2424), "$2a$11$3cE02Y7wJ1Zxmjv28t6HEuYsWIuIlvEcgpJRoo/pd0K05kEFymrLG", new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2430) });
 
             migrationBuilder.UpdateData(
                 table: "users_user",
                 keyColumn: "id",
                 keyValue: 2,
                 columns: new[] { "created_at", "date_joined", "last_login", "password", "updated_at" },
-                values: new object[] { new DateTime(2024, 7, 10, 14, 45, 22, 48, DateTimeKind.Utc).AddTicks(9189), new DateTime(2024, 7, 10, 14, 45, 22, 48, DateTimeKind.Utc).AddTicks(9189), new DateTime(2024, 7, 10, 14, 45, 22, 48, DateTimeKind.Utc).AddTicks(9189), "$2a$11$DZHMDBClWwvEEXmVqUZY/OIJbgoQX/t7eOWdlV6NO/wnXEAerr7dK", new DateTime(2024, 7, 10, 14, 45, 22, 48, DateTimeKind.Utc).AddTicks(9190) });
+                values: new object[] { new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2433), new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2433), new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2433), "$2a$11$3cE02Y7wJ1Zxmjv28t6HEuYsWIuIlvEcgpJRoo/pd0K05kEFymrLG", new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2434) });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_orders_payment_method_id",
+                table: "orders",
+                column: "payment_method_id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "orders_order");
+                name: "orders");
+
+            migrationBuilder.DropTable(
+                name: "payment_methods");
 
             migrationBuilder.UpdateData(
                 table: "roles_role",

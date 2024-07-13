@@ -5,7 +5,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace DotnetBoilerplate.Infrastructure.Utils
+namespace DotnetBoilerplate.Application.Utils
 {
     public class VnPayLibrary
     {

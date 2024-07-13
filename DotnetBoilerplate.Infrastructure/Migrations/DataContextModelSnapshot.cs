@@ -54,6 +54,14 @@ namespace DotnetBoilerplate.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("customer_phone");
 
+                    b.Property<int>("PaymentMethodId")
+                        .HasColumnType("integer")
+                        .HasColumnName("payment_method_id");
+
+                    b.Property<string>("PaymentOrderId")
+                        .HasColumnType("text")
+                        .HasColumnName("payment_order_id");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer")
                         .HasColumnName("status");
@@ -62,9 +70,58 @@ namespace DotnetBoilerplate.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
+
                     b.HasKey("Id");
 
-                    b.ToTable("orders_order", (string)null);
+                    b.HasIndex("PaymentMethodId");
+
+                    b.ToTable("orders", (string)null);
+                });
+
+            modelBuilder.Entity("DotnetBoilerplate.Domain.Entities.PaymentMethod", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("payment_methods", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2437),
+                            Name = "MoMo",
+                            UpdatedAt = new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2438)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2439),
+                            Name = "VNPay",
+                            UpdatedAt = new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2440)
+                        });
                 });
 
             modelBuilder.Entity("DotnetBoilerplate.Domain.Entities.Role", b =>
@@ -97,16 +154,16 @@ namespace DotnetBoilerplate.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 7, 10, 14, 45, 21, 925, DateTimeKind.Utc).AddTicks(4964),
+                            CreatedAt = new DateTime(2024, 7, 13, 16, 2, 25, 688, DateTimeKind.Utc).AddTicks(8908),
                             Name = "admin",
-                            UpdatedAt = new DateTime(2024, 7, 10, 14, 45, 21, 925, DateTimeKind.Utc).AddTicks(4964)
+                            UpdatedAt = new DateTime(2024, 7, 13, 16, 2, 25, 688, DateTimeKind.Utc).AddTicks(8908)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2024, 7, 10, 14, 45, 21, 925, DateTimeKind.Utc).AddTicks(4966),
+                            CreatedAt = new DateTime(2024, 7, 13, 16, 2, 25, 688, DateTimeKind.Utc).AddTicks(8916),
                             Name = "member",
-                            UpdatedAt = new DateTime(2024, 7, 10, 14, 45, 21, 925, DateTimeKind.Utc).AddTicks(4966)
+                            UpdatedAt = new DateTime(2024, 7, 13, 16, 2, 25, 688, DateTimeKind.Utc).AddTicks(8917)
                         });
                 });
 
@@ -179,33 +236,44 @@ namespace DotnetBoilerplate.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 7, 10, 14, 45, 22, 48, DateTimeKind.Utc).AddTicks(9156),
-                            DateJoined = new DateTime(2024, 7, 10, 14, 45, 22, 48, DateTimeKind.Utc).AddTicks(9183),
+                            CreatedAt = new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2423),
+                            DateJoined = new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2423),
                             Email = "admin@email.com",
                             FullName = "Admin",
                             IsActive = true,
                             IsStaff = false,
                             IsSuperUser = true,
-                            LastLogin = new DateTime(2024, 7, 10, 14, 45, 22, 48, DateTimeKind.Utc).AddTicks(9183),
-                            Password = "$2a$11$DZHMDBClWwvEEXmVqUZY/OIJbgoQX/t7eOWdlV6NO/wnXEAerr7dK",
+                            LastLogin = new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2424),
+                            Password = "$2a$11$3cE02Y7wJ1Zxmjv28t6HEuYsWIuIlvEcgpJRoo/pd0K05kEFymrLG",
                             RoleId = 1,
-                            UpdatedAt = new DateTime(2024, 7, 10, 14, 45, 22, 48, DateTimeKind.Utc).AddTicks(9186)
+                            UpdatedAt = new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2430)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2024, 7, 10, 14, 45, 22, 48, DateTimeKind.Utc).AddTicks(9189),
-                            DateJoined = new DateTime(2024, 7, 10, 14, 45, 22, 48, DateTimeKind.Utc).AddTicks(9189),
+                            CreatedAt = new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2433),
+                            DateJoined = new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2433),
                             Email = "long@email.com",
                             FullName = "Long",
                             IsActive = true,
                             IsStaff = false,
                             IsSuperUser = false,
-                            LastLogin = new DateTime(2024, 7, 10, 14, 45, 22, 48, DateTimeKind.Utc).AddTicks(9189),
-                            Password = "$2a$11$DZHMDBClWwvEEXmVqUZY/OIJbgoQX/t7eOWdlV6NO/wnXEAerr7dK",
+                            LastLogin = new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2433),
+                            Password = "$2a$11$3cE02Y7wJ1Zxmjv28t6HEuYsWIuIlvEcgpJRoo/pd0K05kEFymrLG",
                             RoleId = 2,
-                            UpdatedAt = new DateTime(2024, 7, 10, 14, 45, 22, 48, DateTimeKind.Utc).AddTicks(9190)
+                            UpdatedAt = new DateTime(2024, 7, 13, 16, 2, 25, 825, DateTimeKind.Utc).AddTicks(2434)
                         });
+                });
+
+            modelBuilder.Entity("DotnetBoilerplate.Domain.Entities.Order", b =>
+                {
+                    b.HasOne("DotnetBoilerplate.Domain.Entities.PaymentMethod", "PaymentMethod")
+                        .WithMany()
+                        .HasForeignKey("PaymentMethodId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("PaymentMethod");
                 });
 
             modelBuilder.Entity("DotnetBoilerplate.Domain.Entities.User", b =>

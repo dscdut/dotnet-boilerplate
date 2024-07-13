@@ -1,26 +1,24 @@
 ﻿using DotnetBoilerplate.Api.Utils;
 using DotnetBoilerplate.Application.Dtos;
-using DotnetBoilerplate.Application.ExternalServices;
-using DotnetBoilerplate.Application.Services.Order;
+using DotnetBoilerplate.Application.Services.VNPayOrder;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Specialized;
 
 namespace DotnetBoilerplate.Api.Controllers
 {
     [ApiController]
-    [Route("payment")]
-    public class OrderController : ControllerBase
+    [Route("vnpay")]
+    public class VNPayOrderController : ControllerBase
     {
-        private IOrderService _orderService;
+        private IVNPayOrderService _orderService;
         private IHttpContextAccessor _httpContextAccessor;
 
-        public OrderController(IOrderService orderService, IHttpContextAccessor httpContextAccessor)
+        public VNPayOrderController(IVNPayOrderService orderService, IHttpContextAccessor httpContextAccessor)
         {
             _orderService = orderService;
             _httpContextAccessor = httpContextAccessor;
         }
 
-        [HttpPost("process")]
+        [HttpPost("create-payment-url")]
         public async Task<IActionResult> ProcessPayment([FromBody] PaymentRequest request)
         {
             var response = await _orderService.CreateOrderWithPaymentUrl(request);
@@ -28,20 +26,19 @@ namespace DotnetBoilerplate.Api.Controllers
         }
 
         [HttpGet]
-        [HttpPost]
-        [Route("confirm/{provider}")]
-        public async Task<IActionResult> HandleNotification(string provider)
+        [Route("confirm")]
+        public async Task<IActionResult> HandleNotification()
         {
             var queryParamsCollection = RequestUtils.GetAllQueryParams(_httpContextAccessor);
-            var response = await _orderService.ConfirmPayment(queryParamsCollection, provider);
+            var response = await _orderService.ConfirmPayment(queryParamsCollection);
             return Ok(response);
         }
 
-        [HttpGet("verify/{provider}")]
-        public IActionResult VerifyPaymentResponse(string provider)
+        [HttpGet("verify")]
+        public IActionResult VerifyPaymentResponse()
         {
             var queryParamsCollection = RequestUtils.GetAllQueryParams(_httpContextAccessor);
-            var response = _orderService.VerifyPaymentResponse(queryParamsCollection, provider);
+            var response = _orderService.VerifyPaymentResponse(queryParamsCollection);
             return Ok(response);
         }
     }

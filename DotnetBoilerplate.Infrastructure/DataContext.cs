@@ -10,7 +10,7 @@ namespace DotnetBoilerplate.Infrastructure
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Order> Orders { get; set; }
-
+        public DbSet<PaymentMethod> PaymentMethods { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // User Entity Configuration
@@ -67,24 +67,50 @@ namespace DotnetBoilerplate.Infrastructure
                 entity.Property(e => e.CustomerPhone).HasColumnName("customer_phone");
                 entity.Property(e => e.Amount).HasColumnName("amount");
                 entity.Property(e => e.Currency).HasColumnName("currency");
-                // add OrderStatusEnum as status int column
                 entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.PaymentMethodId).HasColumnName("payment_method_id");
+                entity.Property(e => e.PaymentOrderId).HasColumnName("payment_order_id").IsRequired(false);
+                entity.Property(e => e.UserId).HasColumnName("user_id");
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at");
                 entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
 
                 entity.Property(e => e.CreatedAt).HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
                 entity.Property(e => e.UpdatedAt).HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
             });
-            modelBuilder.Entity<Order>().ToTable("orders_order");
+            modelBuilder.Entity<Order>().ToTable("orders");
+
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.PaymentMethod)
+                .WithMany()
+                .HasForeignKey(o => o.PaymentMethodId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // PaymentMethod Entity Configuration
+            modelBuilder.Entity<PaymentMethod>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Name).HasColumnName("name");
+                entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+                entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+
+                entity.Property(e => e.CreatedAt).HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+                entity.Property(e => e.UpdatedAt).HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+            });
+
+            modelBuilder.Entity<PaymentMethod>().ToTable("payment_methods");
 
             var adminRole = new Role { Id = 1, Name = "admin", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow };
             var memberRole = new Role { Id = 2, Name = "member", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow };
             var defaultPassword = BCrypt.Net.BCrypt.HashPassword("String@123");
             var user1 = new User { Id = 1, FullName = "Admin", Email = "admin@email.com", Password = defaultPassword, RoleId = 1, IsSuperUser = true, IsStaff = false, IsActive = true, CreatedAt = DateTime.UtcNow, DateJoined = DateTime.UtcNow, LastLogin = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow };
             var user2 = new User { Id = 2, FullName = "Long", Email = "long@email.com", Password = defaultPassword, RoleId = 2, IsSuperUser = false, IsStaff = false, IsActive = true, CreatedAt = DateTime.UtcNow, DateJoined = DateTime.UtcNow, LastLogin = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow };
+            var paymentMethod1 = new PaymentMethod { Id = 1, Name = "MoMo", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow };
+            var paymentMethod2 = new PaymentMethod { Id = 2, Name = "VNPay", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow };
+
 
             modelBuilder.Entity<Role>().HasData(adminRole, memberRole);
             modelBuilder.Entity<User>().HasData(user1, user2);
+            modelBuilder.Entity<PaymentMethod>().HasData(paymentMethod1, paymentMethod2);
 
             base.OnModelCreating(modelBuilder);
         }

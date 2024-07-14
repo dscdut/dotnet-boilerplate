@@ -55,9 +55,15 @@ namespace DotnetBoilerplate.Api
                         }
                 });
             });
-            builder.Services.AddApplication(builder.Configuration);
             builder.Services.AddInfrastructure(builder.Configuration);
+            builder.Services.AddApplication(builder.Configuration);
+            builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+            builder.Services.AddHttpContextAccessor();
             var app = builder.Build();
+            app.MapGet("/", async context =>
+            {
+                await context.Response.WriteAsync("Server live!");
+            });
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseCors(builder =>
             {

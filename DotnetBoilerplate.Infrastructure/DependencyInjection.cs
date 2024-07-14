@@ -5,6 +5,7 @@ using DotnetBoilerplate.Infrastructure.ExternalServices;
 using DotnetBoilerplate.Infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
+using DotnetBoilerplate.Domain.Enums;
 
 namespace DotnetBoilerplate.Infrastructure
 {
@@ -23,6 +24,7 @@ namespace DotnetBoilerplate.Infrastructure
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
 
             return services;
         }

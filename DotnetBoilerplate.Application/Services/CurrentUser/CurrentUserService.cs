@@ -19,7 +19,7 @@ namespace DotnetBoilerplate.Application.Services.CurrentUser
             get
             {
                 var userIdClaim = (_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value)
-                    ?? throw new CustomException(StatusCodes.Status403Forbidden, ErrorCodeEnum.InvalidToken, "Invalid Token");
+                    ?? throw new CustomException(StatusCodes.Status401Unauthorized, ErrorCodeEnum.NotLogedIn, "Users must log in to access this resource");
                 return int.Parse(userIdClaim);
             }
         }

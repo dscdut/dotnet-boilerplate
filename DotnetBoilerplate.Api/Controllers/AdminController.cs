@@ -32,7 +32,7 @@ namespace DotnetBoilerplate.Api.Controllers
         [HttpDelete("users/{id}")]
         public async Task<IActionResult> DeleteUserByIdAsync(UserIdParam param)
         {
-            await _adminService.DeleteUserByIdAsync(param.Id);
+            await _adminService.DeleteUserByIdAsync(int.Parse(param.Id));
             return NoContent();
         }
 
@@ -45,7 +45,7 @@ namespace DotnetBoilerplate.Api.Controllers
         [HttpPut("users/{id}")]
         public async Task<IActionResult> UpdateUserByIdAsync(UserIdParam param, [FromBody]AdminUpdateUserDto adminUpdateUserDto)
         {
-            var user = await _adminService.UpdateUserByIdAsync(param.Id, adminUpdateUserDto);
+            var user = await _adminService.UpdateUserByIdAsync(int.Parse(param.Id), adminUpdateUserDto);
             return Ok(user);
         }
     }

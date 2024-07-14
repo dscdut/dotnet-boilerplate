@@ -3,10 +3,8 @@ using DotnetBoilerplate.Application.Dtos;
 using DotnetBoilerplate.Application.Exceptions;
 using DotnetBoilerplate.Application.Repositories;
 using DotnetBoilerplate.Application.Services.CurrentUser;
-using DotnetBoilerplate.Domain.Enums;
 using DotnetBoilerplate.Domain.Payloads;
 using DotnetBoilerplate.Domain.Specifications.Users;
-using Microsoft.AspNetCore.Http;
 
 namespace DotnetBoilerplate.Application.Services.User
 {

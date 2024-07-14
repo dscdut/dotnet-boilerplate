@@ -14,7 +14,7 @@ namespace DotnetBoilerplate.Api.Validators
                 .NotEmpty().WithMessage("Missing required email field")
                 .Matches(@"^.+@.+\.(com|net|org)$")
                 .WithMessage("Invalid email field format: The email address must contain at least one character before and after the '@' symbol and end with an extension like .com, .net, .org.");
-            RuleFor(x => x.RoleId).NotEmpty().WithMessage("Missing required role_id field");
+            RuleFor(x => x.RoleId).NotNull().WithMessage("Missing required role_id field");
         }
     }
 }

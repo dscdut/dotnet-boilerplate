@@ -34,7 +34,7 @@ namespace DotnetBoilerplate.Api.Controllers
         [Route("")]
         public async Task<IActionResult> GetUsers(PaginationParams paginationParams)
         {
-            var users = await _userService.GetPaginationUserAsync(paginationParams.Page, paginationParams.PageSize);
+            var users = await _userService.GetPaginationUserAsync(int.Parse(paginationParams.Page), int.Parse(paginationParams.PageSize));
             return Ok(users);
         }
         /// <summary>
@@ -44,7 +44,6 @@ namespace DotnetBoilerplate.Api.Controllers
         /// <returns>Returns the updated user.</returns>
         [HttpPut]
         [Route("")]
-        [Authorize]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto updateUserDto)
         {
             var updatedUser = await _userService.UpdateUserByIdAsync(updateUserDto);

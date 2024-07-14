@@ -7,21 +7,22 @@ using DotnetBoilerplate.Application.Services.User;
 using DotnetBoilerplate.Application.Services.Auth;
 using DotnetBoilerplate.Application.Services.CurrentUser;
 using DotnetBoilerplate.Application.Services.Admin;
+using DotnetBoilerplate.Application.Services.VNPayOrder;
 
 namespace DotnetBoilerplate.Application
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configration)
+        public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAutoMapper(typeof(DependencyInjection).Assembly);
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IAdminService, AdminService>();
-            services.AddHttpContextAccessor();
+            services.AddScoped<IVNPayOrderService, VNPayOrderService>();
 
-            var key = Encoding.ASCII.GetBytes(configration.GetSection("JwtSettings:Secret").Value!);
+            var key = Encoding.ASCII.GetBytes(configuration.GetSection("JwtSettings:Secret").Value!);
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

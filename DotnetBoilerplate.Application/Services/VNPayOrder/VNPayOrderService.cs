@@ -62,6 +62,7 @@ namespace DotnetBoilerplate.Application.Services.VNPayOrder
             vnPayLibrary.AddRequestData("vnp_ReturnUrl", paymentRequest.ReturnUrl);
             vnPayLibrary.AddRequestData("vnp_IpAddr", PayLibUtils.GetIpAddress(_httpContextAccessor.HttpContext));
             vnPayLibrary.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
+            vnPayLibrary.AddRequestData("vnp_ExpireDate", DateTime.Now.AddMinutes(15).ToString("yyyyMMddHHmmss"));
             vnPayLibrary.AddRequestData("vnp_Locale", paymentRequest.Locale);
             vnPayLibrary.AddRequestData("vnp_OrderType", paymentRequest.OrderType);
 
